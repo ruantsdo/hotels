@@ -26,9 +26,12 @@ import { auth, db } from '../../services/firebase'
 import { doc, getDoc } from "firebase/firestore"
 import { signOut } from "firebase/auth";
 
+import { useToasts } from 'react-toast-notifications'
+
 
 const Home = () => {
   const navigate = useNavigate()
+  const { addToast } = useToasts()
 
   const handleStoreData = async () => {
     const response = localStorage.getItem('@APPAuth:token');
@@ -47,6 +50,7 @@ const Home = () => {
   function firebaseSignOut(){
     signOut(auth).then(() => {
         localStorage.clear()
+        addToast("Você escolheu sair!", { appearance: 'info', autoDismiss: true, })
         navigate('/')
     })
   }

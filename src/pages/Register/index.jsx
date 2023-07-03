@@ -9,7 +9,11 @@ import { auth, db } from '../../services/firebase'
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore"
 
+import { useToasts } from 'react-toast-notifications'
+
 const Register = () => {
+  const { addToast } = useToasts()
+
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -17,10 +21,13 @@ const Register = () => {
 
   const checkPasswordsMatch = () => {
       if(password === "" || password2 === "" || name === "" || email === ""){
-        alert("Os campos de senha devem ser preenchidos!")
+        addToast("Todos os campos são obrigatórios!", { appearance: 'warning', autoDismiss: true, })
         return
       } else if (password !== password2) {
-        alert("As senhas são diferentes!")
+        addToast("As senhas são diferentes!", { appearance: 'warning', autoDismiss: true, })
+        return
+      } else if (password.length < 6 || password2 < 6 ) {
+        addToast("A senha deve ter pelo menos 6 caracteres!", { appearance: 'info', autoDismiss: true, })
         return
       }
 
@@ -37,7 +44,8 @@ const Register = () => {
         writeUserInDB(response, name, email);
     }
     ).catch((error) => {
-        alert(error)
+        addToast("Não foi possivel criar a sua conta. Por favor tente novamente!", { appearance: 'error', autoDismiss: true, })
+        addToast(error , { appearance: 'error', autoDismiss: true, })
     })
   }
 

@@ -10,9 +10,11 @@ import { db } from '../../services/firebase'
 import { doc, setDoc } from "firebase/firestore"
 
 import { useNavigate } from 'react-router-dom'
+import { useToasts } from 'react-toast-notifications'
 
 const TargetRegister = () => {
   const navigate = useNavigate()
+  const { addToast } = useToasts()
 
   const [name, setName] = useState("")
   const [cnpj, setCnpj] = useState("")
@@ -33,10 +35,13 @@ const TargetRegister = () => {
       cnpj: cnpj,
       charter: charter,
       rooms: rooms,
+  }).catch((error) => {
+    addToast("Não foi possivel cadastrar o hotel. Por favor tente novamente!", { appearance: 'error', autoDismiss: true, })
+    addToast(error, { appearance: 'error', autoDismiss: true, })
+    return
   })
     navigate('/home')
   }
-
 
   return (
     <>

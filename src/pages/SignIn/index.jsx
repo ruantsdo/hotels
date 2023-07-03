@@ -10,15 +10,18 @@ import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../../services/firebase'
 
+import { useToasts } from 'react-toast-notifications'
+
 const SignIn = () => {
   const navigate = useNavigate()
+  const { addToast } = useToasts()
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   
   const checkInputs = () => {
     if(email === "" || password === ""){
-      alert("Os campos de senha devem ser preenchidos!")
+      addToast("Todos os campos são obrigatórios!", { appearance: 'warning', autoDismiss: true, })
       return
     }
 
@@ -32,7 +35,7 @@ const SignIn = () => {
         localStorage.setItem('@APPAuth:token', JSON.stringify(response));
         navigate('/home')
     }).catch((error) => {
-        alert(error)
+        addToast("As credênciais fornecidas estão incorretas. Por favor tente novamente!", { appearance: 'warning', autoDismiss: true, })
     });
   }
 

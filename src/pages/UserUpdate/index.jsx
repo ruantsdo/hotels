@@ -10,9 +10,11 @@ import { db } from '../../services/firebase'
 import { doc, setDoc, getDoc } from "firebase/firestore"
 
 import { useNavigate } from 'react-router-dom'
+import { useToasts } from 'react-toast-notifications'
 
 const UserUpdate = () => {
   const navigate = useNavigate()
+  const { addToast } = useToasts()
 
   const [email, setEmail] = useState("")
   const [name, setName] = useState("")
@@ -36,7 +38,7 @@ const UserUpdate = () => {
       setEmail(userData.email)
       setName(userData.name)
     } else {
-        alert("Não foi possivel recuperar os seus dados!");
+        addToast("Não foi possível recuperar os seus dados!", { appearance: 'error', autoDismiss: true, })
         navigate('/home')
     }
     }
@@ -46,9 +48,13 @@ const UserUpdate = () => {
     await setDoc(doc(db, "users", token.uid), {
         name: name,
         email: email
-      });
-      navigate('/home')
-  }
+      }).catch((error) => {
+        addToast("Não foi possivel atualizar os dados. Por favor tente novamente!", { appearance: 'error', autoDismiss: true, })
+        addToast(error, { appearance: 'error', autoDismiss: true, })
+        return
+      })
+        navigate('/home')
+      }
 
   return (
     <>

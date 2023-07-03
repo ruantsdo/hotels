@@ -10,9 +10,11 @@ import { db } from '../../services/firebase'
 import { doc, setDoc, getDoc } from "firebase/firestore"
 
 import { useNavigate } from 'react-router-dom'
+import { useToasts } from 'react-toast-notifications'
 
 const TargetUpdate = () => {
   const navigate = useNavigate()
+  const { addToast } = useToasts()
 
   const [name, setName] = useState("")
   const [cnpj, setCnpj] = useState("")
@@ -42,7 +44,7 @@ const TargetUpdate = () => {
       setCharter(storeData.charter);
       setRooms(storeData.rooms);
     } else {
-      alert("Não foi possível recuperar os seus dados!");
+      addToast("Não foi possível recuperar os seus dados!", { appearance: 'error', autoDismiss: true, })
       navigate('/home');
     }
   };
@@ -59,9 +61,13 @@ const TargetUpdate = () => {
       cnpj: cnpj,
       charter: charter,
       rooms: rooms,
-    });
-    navigate('/home');
-  };
+    }).catch((error) => {
+      addToast("Não foi possivel atualizar os dados. Por favor tente novamente!", { appearance: 'error', autoDismiss: true, })
+      addToast(error, { appearance: 'error', autoDismiss: true, })
+      return
+    })
+      navigate('/home')
+    }
 
 
   return (
