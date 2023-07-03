@@ -23,13 +23,6 @@ const AppRoutes = () => {
     )    
 }
 
-/*
-<Route path="/home" element={<Home />} />
-<Route path="/targetRegister" element={<TargetRegister />} />
-<Route path="/userUpdate" element={<UserUpdate />} />
-<Route path="/targetUpdate" element={<TargetUpdate />} />
-*/
-
 const AuthRoutes = () => {
     return(
         <Routes>
