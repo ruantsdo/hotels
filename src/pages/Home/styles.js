@@ -14,6 +14,8 @@ export const LogoContainer = styled.div`
 
     align-items: center;
     justify-content: start;
+
+    text-indent: 1rem;
 `
 export const MenuContainer = styled.div`
     display: flex;
@@ -22,6 +24,8 @@ export const MenuContainer = styled.div`
 
     align-items: center;
     justify-content: end;
+
+    margin-right: 0.7rem;
 `
 export const MenuIcons = styled.div`
     display: flex;

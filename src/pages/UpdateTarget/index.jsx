@@ -66,7 +66,7 @@ const TargetUpdate = () => {
       addToast(error, { appearance: 'error', autoDismiss: true, })
       return
     })
-      navigate('/home')
+      navigate('/')
     }
 
 

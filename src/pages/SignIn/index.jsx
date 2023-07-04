@@ -33,7 +33,7 @@ const SignIn = () => {
     .then((userCredential) => {
         const response = userCredential.user;
         localStorage.setItem('@APPAuth:token', JSON.stringify(response));
-        navigate('/home')
+        navigate('/')
     }).catch((error) => {
         addToast("As credênciais fornecidas estão incorretas. Por favor tente novamente!", { appearance: 'warning', autoDismiss: true, })
     });
