@@ -38,7 +38,7 @@ const Home = () => {
   const navigate = useNavigate()
   const { addToast } = useToasts()
 
-  const [storage, setStorage] = useState("")
+  const [storage, setStorage] = useState(null)
 
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
