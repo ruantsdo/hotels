@@ -45,9 +45,9 @@ const Header = () => {
   const token = JSON.parse(response)
 
   useEffect(() => {
-    handleStoreData()
-    handleUserData()
-  })
+
+    // eslint-disable-next-line
+  }, [])
 
   const verifyToken = () => {
     if(!token){
@@ -63,6 +63,8 @@ const Header = () => {
 
     const userData = localStorage.getItem('@APPAuth:user')
     setUser(JSON.parse(userData))
+
+    navigate('/userUpdate')
   }
 
   const handleStoreData = async () => {
@@ -83,6 +85,8 @@ const Header = () => {
       addToast("Você deve estar logado para cadastrar um hotel!", { appearance: 'info', autoDismiss: true, })
       return
     }
+
+    handleStoreData()
 
     if (storage) {
       navigate('/targetUpdate')
@@ -157,7 +161,7 @@ const Header = () => {
               <MenuItem onClick={() => {handleClose(); navigate('/')}} >
                 <HomeIcon /> Home
               </MenuItem>
-              <MenuItem onClick={() => {handleClose(); handleUserData(); navigate('/userUpdate')}}>
+              <MenuItem onClick={() => {handleClose(); handleUserData()}}>
                 <EditIcon /> Editar perfil
               </MenuItem>
             {storage ? 
