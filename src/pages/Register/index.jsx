@@ -7,12 +7,15 @@ import Button from '@mui/material/Button';
 
 import { auth, db } from '../../services/firebase'
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore"
+import { doc, setDoc, getDoc } from "firebase/firestore"
 
 import { useToasts } from 'react-toast-notifications'
 
+import { useNavigate } from "react-router-dom";
+
 const Register = () => {
   const { addToast } = useToasts()
+  const navigate = useNavigate()
 
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -39,9 +42,18 @@ const Register = () => {
   async function resgisterWithEmail(){
     await createUserWithEmailAndPassword(auth, email, password )
     .then((userCredential) => {
-        const response = userCredential.user;
-        localStorage.setItem('@APPAuth:token', JSON.stringify(response));
-        writeUserInDB(response, name, email);
+        const response = userCredential.user
+        localStorage.setItem('@APPAuth:token', JSON.stringify(response))
+        writeUserInDB(response, name, email).then(() => {
+          const docRef = doc(db, "users", response);
+          const docSnap = getDoc(docRef);
+
+          if (docSnap.exists()) {
+            localStorage.setItem('@APPAuth:user', JSON.stringify(docSnap))
+          }
+        }).then(() => {
+          navigate('/')
+        })
     }
     ).catch((error) => {
         addToast("Não foi possivel criar a sua conta. Por favor tente novamente!", { appearance: 'error', autoDismiss: true, })

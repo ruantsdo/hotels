@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import Header from "../../components/header"
+import Header from "../../components/Header/header"
 import { FormContainer, Container, Title, TitleContainer, InputContainer } from "./styles"
 
 import TextField from '@mui/material/TextField';

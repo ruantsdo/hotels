@@ -7,8 +7,9 @@ import Button from '@mui/material/Button';
 
 import { Link, useNavigate } from "react-router-dom";
 
+import { auth, db } from '../../services/firebase'
+import { doc, getDoc } from "firebase/firestore"
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from '../../services/firebase'
 
 import { useToasts } from 'react-toast-notifications'
 
@@ -32,8 +33,16 @@ const SignIn = () => {
     await signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
         const response = userCredential.user;
-        localStorage.setItem('@APPAuth:token', JSON.stringify(response));
-        navigate('/')
+        localStorage.setItem('@APPAuth:token', JSON.stringify(response)).then(() => {
+          const docRef = doc(db, "users", response);
+          const docSnap = getDoc(docRef);
+
+          if (docSnap.exists()) {
+            localStorage.setItem('@APPAuth:user', JSON.stringify(docSnap))
+          }
+        }).then(() => {
+          navigate('/')
+        })
     }).catch((error) => {
         addToast("As credênciais fornecidas estão incorretas. Por favor tente novamente!", { appearance: 'warning', autoDismiss: true, })
     });

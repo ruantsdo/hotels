@@ -5,7 +5,7 @@ import background from "../../assets/imgs/login-background.jpeg"
 export const Container = styled.div`
     display: flex;
     width: 100vw;
-    height: 92vh;
+    height: 97vh;
 
     justify-content: center;
     align-items: center;

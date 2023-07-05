@@ -5,15 +5,13 @@ import background from "../../assets/imgs/login-background.jpeg"
 export const Container = styled.div`
     display: flex;
     width: 100vw;
-    height: 92vh;
+    height: 93vh;
 
     justify-content: center;
     align-items: center;
 
     background-color: white;
     background-image: url(${background});
-
-
 `
 export const FormContainer = styled.div`
     display: flex;

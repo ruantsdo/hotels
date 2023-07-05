@@ -6,6 +6,8 @@ export const Container = styled.div`
     height: 100vh;
 
     flex-direction: column;
+
+    overflow: auto;
 `
 export const LogoContainer = styled.div`
     display: flex;
@@ -40,7 +42,7 @@ export const SearchContainer = styled.div`
     flex-direction: column;
 
     width: 100vw;
-    height: 20vh;
+    height: 15vh;
 
     color: black;
     background-color:  white;
@@ -49,11 +51,13 @@ export const SearchContainer = styled.div`
     align-items: center;
 
     border-bottom: 1px solid black;
+
+    overflow: auto;
 `
 export const ContentContainer = styled.div`
     display: flex;
     width: 100vw;
-    height: 100vh;
+    height: 78vh;
 
     flex-direction: row;
 `
@@ -78,13 +82,15 @@ export const InfoContainer = styled.div`
     border-left: 1px solid black;
 
     background-color:  white;
+
+    overflow: auto;
 `
 export const Card = styled.div`
     display: flex;
     align-items: center;
 
     width: 95%;
-    height: 10rem;
+    height: 30%;
 
     background-color: white;
     border: 1px solid black;
