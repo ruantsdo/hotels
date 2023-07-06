@@ -1,19 +1,20 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
+import AuthContext from '../../Contexts/Auth'
 
 import { FormContainer, Container, Title, TitleContainer, InputContainer } from "./styles"
 
+import Header from '../../components/Header/header';
+
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-
-import { auth, db } from '../../services/firebase'
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore"
 
 import { useToasts } from 'react-toast-notifications'
 
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const { registerWithEmail } = useContext(AuthContext)
+
   const { addToast } = useToasts()
   const navigate = useNavigate()
 
@@ -35,40 +36,19 @@ const Register = () => {
       }
 
       if(password === password2){
-        resgisterWithEmail()
+        createUser()
       }
   };
 
-  async function resgisterWithEmail(){
-    await createUserWithEmailAndPassword(auth, email, password )
-    .then((userCredential) => {
-        const response = userCredential.user
-        localStorage.setItem('@APPAuth:token', JSON.stringify(response))
-        writeUserInDB(response.uid, name, email)
-    }).catch((error) => {
-        addToast("Não foi possivel criar a sua conta. Por favor tente novamente!", { appearance: 'error', autoDismiss: true, })
-        addToast(error , { appearance: 'error', autoDismiss: true, })
-    })
+  async function createUser(){
+    await registerWithEmail(name, email, password)
 
     navigate('/')
-  }
-
-  async function writeUserInDB(response, name, email ){
-    await setDoc(doc(db, "users", response), {
-        name: name,
-        email: email,
-      });
-
-      const docRef = doc(db, "users", response);
-      const docSnap = getDoc(docRef);
-
-    if (docSnap) {
-      localStorage.setItem('@APPAuth:user', JSON.stringify(docSnap))
-    }
-  }   
+  } 
 
   return (
     <>
+      <Header />
       <Container>
         <FormContainer>
           <TitleContainer>

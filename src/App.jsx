@@ -8,9 +8,9 @@ import { ToastProvider } from 'react-toast-notifications'
 function App() {
   return (
   <ToastProvider>
-  <AuthProvider>
-      <AppRoutes />
-  </AuthProvider>
+    <AuthProvider>
+        <AppRoutes />
+    </AuthProvider>
   </ToastProvider>
   )
 }

@@ -1,19 +1,20 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
+import AuthContext from '../../Contexts/Auth'
 
 import { FormContainer, Container, Title, SubTitle, TitleContainer, InputContainer } from "./styles"
+
+import Header from '../../components/Header/header';
 
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
 import { Link, useNavigate } from "react-router-dom";
 
-import { auth, db } from '../../services/firebase'
-import { doc, getDoc } from "firebase/firestore"
-import { signInWithEmailAndPassword } from "firebase/auth";
-
 import { useToasts } from 'react-toast-notifications'
 
 const SignIn = () => {
+  const { signInWithEmail } = useContext(AuthContext)
+
   const navigate = useNavigate()
   const { addToast } = useToasts()
 
@@ -26,31 +27,22 @@ const SignIn = () => {
       return
     }
 
-      signInWithEmail()
+    signIn()
 };
 
-  async function signInWithEmail(){
-    await signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-        const response = userCredential.user;
-        localStorage.setItem('@APPAuth:token', JSON.stringify(response))
+  async function signIn(){
+    const response = await signInWithEmail(email, password)
 
-          const docRef = doc(db, "users", response.uid);
-          const docSnap = getDoc(docRef);
+    if(response === false){
+      return
+    } 
 
-          if (docSnap) {
-            localStorage.setItem('@APPAuth:user', JSON.stringify(docSnap))
-          }
-        
-          navigate('/')
-    }).catch((error) => {
-        addToast("As credênciais fornecidas estão incorretas. Por favor tente novamente!", { appearance: 'warning', autoDismiss: true, })
-        alert(error)
-    });
+    navigate('/')
   }
 
   return (
     <>
+      <Header />
       <Container>
         <FormContainer>
           <TitleContainer>

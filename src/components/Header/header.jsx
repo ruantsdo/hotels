@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useContext } from 'react'
+import AuthContext from '../../Contexts/Auth'
 
 import { Container, LogoContainer, MenuContainer } from './styles'
 
 import { useNavigate } from 'react-router-dom'
 
-import { auth, db } from '../../services/firebase'
+import { db } from '../../services/firebase'
 import { doc, getDoc } from "firebase/firestore"
-import { signOut } from "firebase/auth";
 
 import { useToasts } from 'react-toast-notifications'
 
@@ -24,19 +24,12 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 
 const Header = () => {
+  const { user, token, firebaseSignOut } = useContext(AuthContext)
+
   const navigate = useNavigate()
   const { addToast } = useToasts()
 
   const [storage, setStorage] = useState(null)
-  const [user, setUser] = useState(null);
-  const [userName, setUserName] = useState(null)
-
-  useEffect(() => {
-    const userData = localStorage.getItem('@APPAuth:user');
-    const userInfo = JSON.parse(userData);
-    setUser(userInfo);
-    setUserName(userInfo.name)
-  }, []);
 
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
@@ -48,9 +41,6 @@ const Header = () => {
   const handleClose = () => {
     setAnchorEl(null)
   }
-
-  const response = localStorage.getItem('@APPAuth:token')
-  const token = JSON.parse(response)
 
   const verifyToken = () => {
     if(!token){
@@ -85,15 +75,10 @@ const Header = () => {
     navigate('/targetRegister')
   }
 
-  function firebaseSignOut(){
-    signOut(auth).then(() => {
-        localStorage.clear()
-        setUser(null)
-        setStorage(null)
-        addToast("Você escolheu sair!", { appearance: 'info', autoDismiss: true, })
-    })
+  const logout = () => {
+    firebaseSignOut()
 
-    navigate('/')
+    setStorage(null)
   }
 
   return(
@@ -110,7 +95,7 @@ const Header = () => {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <Avatar sx={{ width: '2.5rem', height: '2.5rem' }}>{userName ? userName.charAt(0) : 'C'}</Avatar>
+            <Avatar sx={{ width: '2.5rem', height: '2.5rem' }}>{user ? <AccountBoxIcon /> : 'C'}</Avatar>
           </IconButton>
           <Tooltip title="Mais opções">
           <Menu
@@ -150,9 +135,9 @@ const Header = () => {
           >
               {user ? 
                 <MenuItem >
-                  <AccountBoxIcon /> Olá, {userName}
+                  <AccountBoxIcon /> Olá, {user.name}
                 </MenuItem>
-              :  
+                :  
                 <MenuItem >
                   <AccountBoxIcon /> Convidado
                 </MenuItem>
@@ -166,17 +151,17 @@ const Header = () => {
               </MenuItem>
             {storage ? 
               <MenuItem onClick={() => {handleClose(); handleStoreData()}}>
-                <HotelIcon /> Cadastrar hotel
+                <HotelIcon /> Atualizar hotel
               </MenuItem> 
                 : 
               <MenuItem onClick={() => {handleClose(); handleStoreData()}}>
-                <HotelIcon /> Atualizar hotel
+                <HotelIcon /> Cadastrar hotel
               </MenuItem>
             }
 
             <Divider />
             {token ? 
-              <MenuItem onClick={() => {handleClose(); firebaseSignOut()}}>
+              <MenuItem onClick={() => {handleClose(); logout()}}>
                 <ListItemIcon>
                   <LogoutIcon />
                 </ListItemIcon>

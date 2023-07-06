@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, useContext } from 'react'
+import AuthContext from '../../Contexts/Auth'
 
 import Header from '../../components/Header/header'
 import { Container, SearchContainer, CardsContainer, InfoContainer, 
@@ -13,6 +14,11 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Ilustration from '../../assets/imgs/searchPhoto.jpeg'
 
 const Home = () => {
+  const { user, token } = useContext(AuthContext)
+
+  useEffect(() => {
+    alert(user?.name)
+  })
   
   return (
     <Container>

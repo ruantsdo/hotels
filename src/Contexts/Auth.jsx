@@ -1,20 +1,90 @@
 import React, { createContext, useState } from "react";
 
+import { useToasts } from 'react-toast-notifications'
+
 //Firebase
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth, db } from '../services/firebase'
 import { doc, setDoc, getDoc } from "firebase/firestore"
+
 //import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-const AuthContext = createContext({ signed: true })
+const AuthContext = createContext({ })
 
 export const AuthProvider = ({ children }) => {
+    const [user, setUser ] = useState(null)
+    const [token, setToken] = useState(null)
+
+    const { addToast } = useToasts()
+
+    async function registerWithEmail( name, email, password ){
+        await createUserWithEmailAndPassword( auth, email, password )
+        .then((userCredential) => {
+            const response = userCredential.user
+            localStorage.setItem('@APPAuth:token', JSON.stringify(response))
+            setToken(response.uid)
+            writeUserInDB(response.uid, name, email)
+        }).catch((error) => {
+            addToast("Não foi possivel criar a sua conta. Por favor tente novamente!", { appearance: 'error', autoDismiss: true, })
+            addToast(error , { appearance: 'error', autoDismiss: true, })
+        })
+      }
+    
+      async function writeUserInDB(response, name, email ){
+        await setDoc(doc(db, "users", response), {
+            name: name,
+            email: email,
+          });
+    
+          const docRef = doc(db, "users", response);
+          const docSnap = getDoc(docRef);
+    
+        if (docSnap) {
+          localStorage.setItem('@APPAuth:user', JSON.stringify(docSnap))
+          setUser(JSON.stringify(docSnap))
+        }
+      }  
+
+      function firebaseSignOut(){
+        signOut(auth).then(() => {
+            localStorage.clear()
+            setUser(null)
+            setToken(null)
+            //setStorage(null)
+            addToast("Você escolheu sair!", { appearance: 'info', autoDismiss: true, })
+        })
+      }
+
+      async function signInWithEmail(email, password){
+        await signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            const response = userCredential.user;
+            localStorage.setItem('@APPAuth:token', JSON.stringify(response))
+            setToken(response.uid)
+    
+              const docRef = doc(db, "users", response.uid);
+              const docSnap = getDoc(docRef);
+    
+              if (docSnap) {
+                localStorage.setItem('@APPAuth:user', JSON.stringify(docSnap))
+                setUser(docSnap)
+              }  
+        }).catch((error) => {
+            addToast("As credênciais fornecidas estão incorretas. Por favor tente novamente!", { appearance: 'warning', autoDismiss: true, })
+            alert(error) 
+            return false
+        });
+      }
+
+
+
+/*
     // eslint-disable-next-line
     const [user, setUser] = useState(null)
     // eslint-disable-next-line
     const [token, setToken] = useState(null)
 
-    /*async function loadStoragedData(){
+    async function loadStoragedData(){
         const storagedToken = await AsyncStorage.getItem('@APPAuth:token')
         const storagedUser = await AsyncStorage.getItem('@APPAuth:user')
 
@@ -23,7 +93,7 @@ export const AuthProvider = ({ children }) => {
             setUser(JSON.parse(storagedUser))
         }
         setLoading(false)
-    }*/
+    }
 
     async function signInWithEmail( email , password ){
         await signInWithEmailAndPassword(auth, email, password)
@@ -52,10 +122,10 @@ export const AuthProvider = ({ children }) => {
 
     function firebaseSignOut(){
         signOut(auth).then(() => {
-            /*AsyncStorage.clear().then(()=>{
+            AsyncStorage.clear().then(()=>{
                 setUser(null)
                 setToken(null)
-            })*/
+            })
           }).catch((error) => {
             console.log("Erro no signout: ", error)
           });
@@ -91,19 +161,20 @@ export const AuthProvider = ({ children }) => {
         } else {
             console.log("Erro ao carregar os seus dados");
         }
+        
     }
+*/
 
     return(
         <AuthContext.Provider 
             value={{
-                
                 user,
+                setUser,
                 token,
-                signInWithEmail, 
-                resgisterWithEmail, 
+                setToken,
+                registerWithEmail,
                 firebaseSignOut,
-                writeUserInDB,
-                writeStoreInDB,
+                signInWithEmail,
             }}
         >
             {children}
@@ -111,4 +182,4 @@ export const AuthProvider = ({ children }) => {
     )
 }
 
-export default AuthProvider
+export default AuthContext

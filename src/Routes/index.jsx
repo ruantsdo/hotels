@@ -10,19 +10,8 @@ import TargetRegister from '../pages/TargetRegister'
 import UserUpdate from '../pages/UserUpdate'
 import TargetUpdate from '../pages/UpdateTarget'
 
-/*const response = localStorage.getItem('@APPAuth:token')
-const token = JSON.parse(response)*/
-
-/*const AppRoutes = () => {
-    return(
-        <Routes>
-            <Route path="/" index element={<SignIn />} />
-            <Route path="/register" element={<Register />} />
-        </Routes>
-    )    
-}*/
-
 export const AppRoutes = () => {
+
     return(
         <BrowserRouter>
             <Routes>
@@ -33,13 +22,9 @@ export const AppRoutes = () => {
                 <Route path="/userUpdate" element={<UserUpdate />} />
                 <Route path="/targetUpdate" element={<TargetUpdate />} />
                 <Route path="/targetRegister" element={<TargetRegister />} />
+
+                <Route path="*" element={<Home />} />
             </Routes>
         </BrowserRouter>
     )
 }
-
-/*export const Router = () => {
-    return(
-       <AppRoutes />
-    )
-}*/
