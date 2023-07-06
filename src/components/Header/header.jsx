@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { Container, LogoContainer, MenuContainer } from './styles'
 
@@ -28,7 +28,15 @@ const Header = () => {
   const { addToast } = useToasts()
 
   const [storage, setStorage] = useState(null)
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null);
+  const [userName, setUserName] = useState(null)
+
+  useEffect(() => {
+    const userData = localStorage.getItem('@APPAuth:user');
+    const userInfo = JSON.parse(userData);
+    setUser(userInfo);
+    setUserName(userInfo.name)
+  }, []);
 
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
@@ -44,11 +52,6 @@ const Header = () => {
   const response = localStorage.getItem('@APPAuth:token')
   const token = JSON.parse(response)
 
-  useEffect(() => {
-
-    // eslint-disable-next-line
-  }, [])
-
   const verifyToken = () => {
     if(!token){
       return false
@@ -61,45 +64,36 @@ const Header = () => {
       return
     }
 
-    const userData = localStorage.getItem('@APPAuth:user')
-    setUser(JSON.parse(userData))
-
     navigate('/userUpdate')
   }
 
   const handleStoreData = async () => {
     if(verifyToken() === false) {
+      addToast("Você deve estar logado para cadastrar um hotel!", { appearance: 'info', autoDismiss: true, })
       return
     }
 
     const docRef = doc(db, "establishments", token.uid);
     const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
+    if (docSnap) {
       setStorage(docSnap)
-    }
-  }
-
-  const RedirectStoreData = async () => {
-    if(verifyToken() === false) {
-      addToast("Você deve estar logado para cadastrar um hotel!", { appearance: 'info', autoDismiss: true, })
+      navigate('/targetUpdate')
       return
     }
 
-    handleStoreData()
-
-    if (storage) {
-      navigate('/targetUpdate')
-    } else {
-      navigate('/targetRegister')
-    }
+    navigate('/targetRegister')
   }
 
   function firebaseSignOut(){
     signOut(auth).then(() => {
         localStorage.clear()
+        setUser(null)
+        setStorage(null)
         addToast("Você escolheu sair!", { appearance: 'info', autoDismiss: true, })
     })
+
+    navigate('/')
   }
 
   return(
@@ -116,7 +110,7 @@ const Header = () => {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <Avatar sx={{ width: '2.5rem', height: '2.5rem' }}>M</Avatar>
+            <Avatar sx={{ width: '2.5rem', height: '2.5rem' }}>{userName ? userName.charAt(0) : 'C'}</Avatar>
           </IconButton>
           <Tooltip title="Mais opções">
           <Menu
@@ -154,9 +148,15 @@ const Header = () => {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-              <MenuItem >
-                <AccountBoxIcon /> Olá, 
-              </MenuItem>
+              {user ? 
+                <MenuItem >
+                  <AccountBoxIcon /> Olá, {userName}
+                </MenuItem>
+              :  
+                <MenuItem >
+                  <AccountBoxIcon /> Convidado
+                </MenuItem>
+              }
               <Divider />
               <MenuItem onClick={() => {handleClose(); navigate('/')}} >
                 <HomeIcon /> Home
@@ -165,12 +165,12 @@ const Header = () => {
                 <EditIcon /> Editar perfil
               </MenuItem>
             {storage ? 
-              <MenuItem onClick={() => {handleClose(); RedirectStoreData()}}>
-                <HotelIcon /> Atualizar hotel
+              <MenuItem onClick={() => {handleClose(); handleStoreData()}}>
+                <HotelIcon /> Cadastrar hotel
               </MenuItem> 
                 : 
-              <MenuItem onClick={() => {handleClose(); RedirectStoreData()}}>
-                <HotelIcon /> Cadastrar hotel
+              <MenuItem onClick={() => {handleClose(); handleStoreData()}}>
+                <HotelIcon /> Atualizar hotel
               </MenuItem>
             }
 

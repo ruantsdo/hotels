@@ -28,19 +28,23 @@ const UserUpdate = () => {
   }, []);
 
   async function handleUserData(){
+    if(!token){
+      return
+    }
+
     const docRef = doc(db, "users", token.uid);
     const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
-      localStorage.setItem('@APPAuth:user', JSON.stringify(docSnap.data()))
-      const response = localStorage.getItem('@APPAuth:user')
-      const userData = JSON.parse(response)
-      setEmail(userData.email)
-      setName(userData.name)
-    } else {
-        addToast("Não foi possível recuperar os seus dados!", { appearance: 'error', autoDismiss: true, })
-        navigate('/home')
-    }
+      if (docSnap.exists()) {
+        localStorage.setItem('@APPAuth:user', JSON.stringify(docSnap.data()))
+        const response = localStorage.getItem('@APPAuth:user')
+        const userData = JSON.parse(response)
+        setEmail(userData.email)
+        setName(userData.name)
+      } else {
+          addToast("Não foi possível recuperar os seus dados!", { appearance: 'error', autoDismiss: true, })
+          navigate('/')
+      }
     }
 
 
@@ -51,7 +55,6 @@ const UserUpdate = () => {
       }).catch((error) => {
         addToast("Não foi possivel atualizar os dados. Por favor tente novamente!", { appearance: 'error', autoDismiss: true, })
         addToast(error, { appearance: 'error', autoDismiss: true, })
-        return
       })
         navigate('/')
       }

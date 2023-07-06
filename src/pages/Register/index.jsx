@@ -21,7 +21,6 @@ const Register = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [password2, setPassword2] = useState("")
-  const [token, setToken ] = useState(null)
 
   const checkPasswordsMatch = () => {
       if(password === "" || password2 === "" || name === "" || email === ""){
@@ -43,29 +42,29 @@ const Register = () => {
   async function resgisterWithEmail(){
     await createUserWithEmailAndPassword(auth, email, password )
     .then((userCredential) => {
-        setToken(userCredential.user)
-        localStorage.setItem('@APPAuth:token', JSON.stringify(token))
-        writeUserInDB(token, name, email)
+        const response = userCredential.user
+        localStorage.setItem('@APPAuth:token', JSON.stringify(response))
+        writeUserInDB(response.uid, name, email)
     }).catch((error) => {
         addToast("Não foi possivel criar a sua conta. Por favor tente novamente!", { appearance: 'error', autoDismiss: true, })
         addToast(error , { appearance: 'error', autoDismiss: true, })
     })
 
-    const docRef = doc(db, "users", token);
-    const docSnap = getDoc(docRef);
-
-    if (docSnap.exists()) {
-      localStorage.setItem('@APPAuth:user', JSON.stringify(docSnap))
-    }
-
     navigate('/')
   }
 
-  async function writeUserInDB( token, name, email ){
-    await setDoc(doc(db, "users", token), {
+  async function writeUserInDB(response, name, email ){
+    await setDoc(doc(db, "users", response), {
         name: name,
         email: email,
       });
+
+      const docRef = doc(db, "users", response);
+      const docSnap = getDoc(docRef);
+
+    if (docSnap) {
+      localStorage.setItem('@APPAuth:user', JSON.stringify(docSnap))
+    }
   }   
 
   return (

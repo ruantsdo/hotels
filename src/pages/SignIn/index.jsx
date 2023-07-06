@@ -33,18 +33,19 @@ const SignIn = () => {
     await signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
         const response = userCredential.user;
-        localStorage.setItem('@APPAuth:token', JSON.stringify(response)).then(() => {
-          const docRef = doc(db, "users", response);
+        localStorage.setItem('@APPAuth:token', JSON.stringify(response))
+
+          const docRef = doc(db, "users", response.uid);
           const docSnap = getDoc(docRef);
 
-          if (docSnap.exists()) {
+          if (docSnap) {
             localStorage.setItem('@APPAuth:user', JSON.stringify(docSnap))
           }
-        }).then(() => {
+        
           navigate('/')
-        })
     }).catch((error) => {
         addToast("As credênciais fornecidas estão incorretas. Por favor tente novamente!", { appearance: 'warning', autoDismiss: true, })
+        alert(error)
     });
   }
 
