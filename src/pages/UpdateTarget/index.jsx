@@ -64,6 +64,7 @@ const TargetUpdate = () => {
       return
     })
       navigate('/')
+      addToast("Os dados foram atualizados com sucesso!", { appearance: 'success', autoDismiss: true, })
   }
 
 

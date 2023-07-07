@@ -38,6 +38,7 @@ const UserUpdate = () => {
         addToast(error, { appearance: 'error', autoDismiss: true, })
       })
     navigate('/')
+    addToast("Os dados foram atualizados com sucesso!", { appearance: 'success', autoDismiss: true, })
   }
 
   async function handleUserData(){

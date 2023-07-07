@@ -63,12 +63,13 @@ export const ContentContainer = styled.div`
 `
 export const CardsContainer = styled.div`
     display: flex;
+    flex-direction: column;
 
     width: 80%;
     height: 100%;
     background-color:  white;
 
-    justify-content: center;
+    align-items: center;
 `
 export const InfoContainer = styled.div`
     display: flex;

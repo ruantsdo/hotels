@@ -37,10 +37,10 @@ const TargetRegister = () => {
       rooms: rooms,
   }).catch((error) => {
     addToast("Não foi possivel cadastrar o hotel. Por favor tente novamente!", { appearance: 'error', autoDismiss: true, })
-    addToast(error, { appearance: 'error', autoDismiss: true, })
     return
   })
     navigate('/')
+    addToast("Os dados foram cadastrados com sucesso!", { appearance: 'success', autoDismiss: true, })
   }
 
   return (
