@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
+import AuthContext from '../../Contexts/Auth'
 
 import Header from "../../components/Header/header"
 import { FormContainer, Container, Title, TitleContainer, InputContainer } from "./styles"
@@ -13,6 +14,8 @@ import { useNavigate } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
 
 const TargetRegister = () => {
+  const { token } = useContext(AuthContext)
+
   const navigate = useNavigate()
   const { addToast } = useToasts()
 
@@ -23,12 +26,9 @@ const TargetRegister = () => {
   const [charter, setCharter] = useState("")
   const [rooms, setRooms] = useState("")
 
-  const response = localStorage.getItem('@APPAuth:token')
-  const token = JSON.parse(response)
-
   async function writeStoreInDB(){
-    await setDoc(doc(db, "establishments", token.uid), {
-      owner: token.uid,
+    await setDoc(doc(db, "establishments", token), {
+      owner: token,
       name: name,
       address: address,
       tier: tier,

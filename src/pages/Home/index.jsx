@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useContext } from 'react'
 import AuthContext from '../../Contexts/Auth'
 
 import Header from '../../components/Header/header'
@@ -14,11 +14,8 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Ilustration from '../../assets/imgs/searchPhoto.jpeg'
 
 const Home = () => {
-  const { user, token } = useContext(AuthContext)
-
-  useEffect(() => {
-    alert(user?.name)
-  })
+  // eslint-disable-next-line
+  const {} = useContext(AuthContext)
   
   return (
     <Container>

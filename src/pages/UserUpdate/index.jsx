@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
+import AuthContext from '../../Contexts/Auth'
 
 import Header from "../../components/Header/header"
 import { FormContainer, Container, Title, TitleContainer, InputContainer } from "./styles"
@@ -13,51 +14,50 @@ import { useNavigate } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
 
 const UserUpdate = () => {
+  const { token } = useContext(AuthContext)
+
+  useEffect(() => {
+    handleUserData() 
+
+    // eslint-disable-next-line
+  }, [])
+
   const navigate = useNavigate()
   const { addToast } = useToasts()
 
+  // eslint-disable-next-line
   const [email, setEmail] = useState("")
   const [name, setName] = useState("")
 
-  const response = localStorage.getItem('@APPAuth:token')
-  const token = JSON.parse(response)
-
-  useEffect(() => {
-    handleUserData();
-    // eslint-disable-next-line
-  }, []);
-
-  async function handleUserData(){
-    if(!token){
-      return
-    }
-
-    const docRef = doc(db, "users", token.uid);
-    const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        localStorage.setItem('@APPAuth:user', JSON.stringify(docSnap.data()))
-        const response = localStorage.getItem('@APPAuth:user')
-        const userData = JSON.parse(response)
-        setEmail(userData.email)
-        setName(userData.name)
-      } else {
-          addToast("Não foi possível recuperar os seus dados!", { appearance: 'error', autoDismiss: true, })
-          navigate('/')
-      }
-    }
-
-
   async function writeUserInDB(){
-    await setDoc(doc(db, "users", token.uid), {
+    await setDoc(doc(db, "users", token), {
         name: name,
         email: email
       }).catch((error) => {
         addToast("Não foi possivel atualizar os dados. Por favor tente novamente!", { appearance: 'error', autoDismiss: true, })
         addToast(error, { appearance: 'error', autoDismiss: true, })
       })
-        navigate('/')
-      }
+    navigate('/')
+  }
+
+  async function handleUserData(){
+    if(!token){
+        return
+    }
+
+    const docRef = doc(db, "users", token);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        localStorage.setItem('@APPAuth:user', JSON.stringify(docSnap.data()))
+        const data = docSnap.data()
+        setEmail(data.email)
+        setName(data.name)
+    } else {
+        addToast("Não foi possível recuperar os seus dados!", { appearance: 'error', autoDismiss: true, })
+        return false
+    }
+  }
 
   return (
     <>

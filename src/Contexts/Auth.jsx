@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 
 import { useToasts } from 'react-toast-notifications'
 
@@ -9,7 +9,7 @@ import { doc, setDoc, getDoc } from "firebase/firestore"
 
 //import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-const AuthContext = createContext({ })
+const AuthContext = createContext({})
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser ] = useState(null)
@@ -17,65 +17,89 @@ export const AuthProvider = ({ children }) => {
 
     const { addToast } = useToasts()
 
+    useEffect(() =>{
+        setUser(JSON.parse(localStorage.getItem('@APPAuth:user')))
+        setToken(JSON.parse(localStorage.getItem('@APPAuth:token')))  
+    }, [])
+
+    async function updateInfo(){
+        setUser(JSON.parse(localStorage.getItem('@APPAuth:user')))
+        setToken(JSON.parse(localStorage.getItem('@APPAuth:token')))  
+    }
+
     async function registerWithEmail( name, email, password ){
         await createUserWithEmailAndPassword( auth, email, password )
         .then((userCredential) => {
             const response = userCredential.user
-            localStorage.setItem('@APPAuth:token', JSON.stringify(response))
+            localStorage.setItem('@APPAuth:token', JSON.stringify(response.uid))
             setToken(response.uid)
             writeUserInDB(response.uid, name, email)
         }).catch((error) => {
             addToast("Não foi possivel criar a sua conta. Por favor tente novamente!", { appearance: 'error', autoDismiss: true, })
             addToast(error , { appearance: 'error', autoDismiss: true, })
         })
-      }
+    }
     
-      async function writeUserInDB(response, name, email ){
+    async function writeUserInDB(response, name, email ){
         await setDoc(doc(db, "users", response), {
             name: name,
             email: email,
-          });
-    
-          const docRef = doc(db, "users", response);
-          const docSnap = getDoc(docRef);
-    
-        if (docSnap) {
-          localStorage.setItem('@APPAuth:user', JSON.stringify(docSnap))
-          setUser(JSON.stringify(docSnap))
-        }
-      }  
+            });
 
-      function firebaseSignOut(){
+            const docRef = doc(db, "users", response);
+            const docSnap = getDoc(docRef);
+
+        if (docSnap) {
+            localStorage.setItem('@APPAuth:user', JSON.stringify(docSnap))
+            setUser(JSON.parse(localStorage.getItem('@APPAuth:user')))
+        }
+    }  
+
+    function firebaseSignOut(){
         signOut(auth).then(() => {
             localStorage.clear()
             setUser(null)
             setToken(null)
-            //setStorage(null)
             addToast("Você escolheu sair!", { appearance: 'info', autoDismiss: true, })
         })
-      }
+    }
 
-      async function signInWithEmail(email, password){
+    async function signInWithEmail(email, password){
         await signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             const response = userCredential.user;
-            localStorage.setItem('@APPAuth:token', JSON.stringify(response))
+            localStorage.setItem('@APPAuth:token', JSON.stringify(response.uid))
             setToken(response.uid)
-    
-              const docRef = doc(db, "users", response.uid);
-              const docSnap = getDoc(docRef);
-    
-              if (docSnap) {
-                localStorage.setItem('@APPAuth:user', JSON.stringify(docSnap))
-                setUser(docSnap)
-              }  
-        }).catch((error) => {
-            addToast("As credênciais fornecidas estão incorretas. Por favor tente novamente!", { appearance: 'warning', autoDismiss: true, })
-            alert(error) 
-            return false
-        });
-      }
 
+                const docRef = doc(db, "users", response.uid);
+                const docSnap = getDoc(docRef);
+
+                if (docSnap) {
+                    localStorage.setItem('@APPAuth:user', JSON.stringify(docSnap))
+                    setUser(JSON.parse(localStorage.getItem('@APPAuth:user')))
+                }  
+        }).catch((error) => {
+            addToast("As credênciais fornecidas estão incorretas. Por favor tente novamente!", { appearance: 'warning', autoDismiss: true, }) 
+            return
+        });
+    }
+
+    async function handleUserData(){
+        if(!token){
+            return
+        }
+
+        const docRef = doc(db, "users", token);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            localStorage.setItem('@APPAuth:user', JSON.stringify(docSnap.data()))
+            setUser(JSON.parse(localStorage.getItem('@APPAuth:user')))
+        } else {
+            addToast("Não foi possível recuperar os seus dados!", { appearance: 'error', autoDismiss: true, })
+            return false
+        }
+    }
 
 
 /*
@@ -175,6 +199,8 @@ export const AuthProvider = ({ children }) => {
                 registerWithEmail,
                 firebaseSignOut,
                 signInWithEmail,
+                handleUserData,
+                updateInfo,
             }}
         >
             {children}

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import AuthContext from '../../Contexts/Auth'
 
 import { Container, LogoContainer, MenuContainer } from './styles'
@@ -24,12 +24,18 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 
 const Header = () => {
-  const { user, token, firebaseSignOut } = useContext(AuthContext)
+  const { token, firebaseSignOut } = useContext(AuthContext)
 
   const navigate = useNavigate()
   const { addToast } = useToasts()
 
   const [storage, setStorage] = useState(null)
+ 
+  useEffect(() => {
+    checkEstablishments()
+
+    // eslint-disable-next-line
+  }, [])
 
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
@@ -42,14 +48,8 @@ const Header = () => {
     setAnchorEl(null)
   }
 
-  const verifyToken = () => {
-    if(!token){
-      return false
-    }
-  }
-
   const handleUserData = async () => {
-    if(verifyToken() === false) {
+    if(!token) {
       addToast("Você deve estar logado para atualizar os seus dados!", { appearance: 'info', autoDismiss: true, })
       return
     }
@@ -57,17 +57,28 @@ const Header = () => {
     navigate('/userUpdate')
   }
 
+  const checkEstablishments = async () => {
+    if(!token) {
+      return
+    }
+
+    const docRef = doc(db, "establishments", token);
+    const docSnap = await getDoc(docRef);
+
+    if(typeof(docSnap.data()) === 'undefined') {
+      return
+    }
+
+    setStorage(docSnap)
+  }
+
   const handleStoreData = async () => {
-    if(verifyToken() === false) {
+    if(!token) {
       addToast("Você deve estar logado para cadastrar um hotel!", { appearance: 'info', autoDismiss: true, })
       return
     }
 
-    const docRef = doc(db, "establishments", token.uid);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap) {
-      setStorage(docSnap)
+    if (storage !== null) {
       navigate('/targetUpdate')
       return
     }
@@ -77,8 +88,8 @@ const Header = () => {
 
   const logout = () => {
     firebaseSignOut()
-
     setStorage(null)
+    navigate('/')
   }
 
   return(
@@ -95,7 +106,7 @@ const Header = () => {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <Avatar sx={{ width: '2.5rem', height: '2.5rem' }}>{user ? <AccountBoxIcon /> : 'C'}</Avatar>
+            <Avatar sx={{ width: '2.5rem', height: '2.5rem' }}>{token ? <AccountBoxIcon /> : 'C'}</Avatar>
           </IconButton>
           <Tooltip title="Mais opções">
           <Menu
@@ -133,48 +144,47 @@ const Header = () => {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-              {user ? 
+              {token ? 
                 <MenuItem >
-                  <AccountBoxIcon /> Olá, {user.name}
+                  <AccountBoxIcon /> Olá
                 </MenuItem>
                 :  
                 <MenuItem >
                   <AccountBoxIcon /> Convidado
                 </MenuItem>
               }
-              <Divider />
-              <MenuItem onClick={() => {handleClose(); navigate('/')}} >
-                <HomeIcon /> Home
-              </MenuItem>
-              <MenuItem onClick={() => {handleClose(); handleUserData()}}>
-                <EditIcon /> Editar perfil
-              </MenuItem>
-            {storage ? 
-              <MenuItem onClick={() => {handleClose(); handleStoreData()}}>
-                <HotelIcon /> Atualizar hotel
-              </MenuItem> 
-                : 
-              <MenuItem onClick={() => {handleClose(); handleStoreData()}}>
-                <HotelIcon /> Cadastrar hotel
-              </MenuItem>
-            }
-
+                <Divider />
+                <MenuItem onClick={() => {handleClose(); navigate('/')}} >
+                  <HomeIcon /> Home
+                </MenuItem>
+                <MenuItem onClick={() => {handleClose(); handleUserData()}}>
+                  <EditIcon /> Editar perfil
+                </MenuItem>
+              {storage ? 
+                <MenuItem onClick={() => {handleClose(); handleStoreData()}}>
+                  <HotelIcon /> Atualizar hotel
+                </MenuItem> 
+                  : 
+                <MenuItem onClick={() => {handleClose(); handleStoreData()}}>
+                  <HotelIcon /> Cadastrar hotel
+                </MenuItem> 
+              }
             <Divider />
-            {token ? 
-              <MenuItem onClick={() => {handleClose(); logout()}}>
-                <ListItemIcon>
-                  <LogoutIcon />
-                </ListItemIcon>
-                Sair
-              </MenuItem>
-            :
-              <MenuItem onClick={() => {handleClose(); navigate('/login')}}>
-                <ListItemIcon>
-                  <LogoutIcon />
-                </ListItemIcon>
-                Entrar
-              </MenuItem>  
-          }
+              {token ? 
+                <MenuItem onClick={() => {handleClose(); logout()}}>
+                  <ListItemIcon>
+                    <LogoutIcon />
+                  </ListItemIcon>
+                  Sair
+                </MenuItem>
+              :
+                <MenuItem onClick={() => {handleClose(); navigate('/login')}}>
+                  <ListItemIcon>
+                    <LogoutIcon />
+                  </ListItemIcon>
+                  Entrar
+                </MenuItem>  
+              }
           </Menu>
           </Tooltip>
         </MenuContainer>

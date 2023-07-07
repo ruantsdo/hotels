@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
+import AuthContext from '../../Contexts/Auth'
 
 import Header from "../../components/Header/header"
 import { FormContainer, Container, Title, TitleContainer, InputContainer } from "./styles"
@@ -13,6 +14,8 @@ import { useNavigate } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
 
 const TargetUpdate = () => {
+  const { token } = useContext(AuthContext)
+
   const navigate = useNavigate()
   const { addToast } = useToasts()
 
@@ -29,13 +32,10 @@ const TargetUpdate = () => {
   }, []);
 
   const handleStoreData = async () => {
-    const response = localStorage.getItem('@APPAuth:token');
-    const token = JSON.parse(response);
-
-    const docRef = doc(db, "establishments", token.uid);
+    const docRef = doc(db, "establishments", token);
     const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
+    if (docSnap) {
       const storeData = docSnap.data();
       setName(storeData.name);
       setCnpj(storeData.cnpj);
@@ -45,16 +45,13 @@ const TargetUpdate = () => {
       setRooms(storeData.rooms);
     } else {
       addToast("Não foi possível recuperar os seus dados!", { appearance: 'error', autoDismiss: true, })
-      navigate('/home');
+      navigate('/');
     }
   };
 
   const writeStoreInDB = async () => {
-    const response = localStorage.getItem('@APPAuth:token');
-    const token = JSON.parse(response);
-
-    await setDoc(doc(db, "establishments", token.uid), {
-      owner: token.uid,
+    await setDoc(doc(db, "establishments", token), {
+      owner: token,
       name: name,
       address: address,
       tier: tier,
@@ -67,7 +64,7 @@ const TargetUpdate = () => {
       return
     })
       navigate('/')
-    }
+  }
 
 
   return (
