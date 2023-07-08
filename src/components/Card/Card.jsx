@@ -4,21 +4,20 @@ import * as S from './styles'
 
 import Ilustration from '../../assets/imgs/searchPhoto.jpeg'
 
-
 const TargetCard = ({ targetData, filteredTargets, fetchTargetData, searchValue, handleCardClick }) => {
     return (
         <>
             {searchValue === "" ? (
                 targetData.map((target, index) => (
-                    <S.Card key={index} onClick={() => handleCardClick(index)}>
+                    <S.Card key={index} onClick={() => handleCardClick(index) }>
                     <S.CardImage src={Ilustration} />
                     <S.CardInfo>
                         <S.Title>{target.name}</S.Title>
                         <S.SubTitle>{target.address}</S.SubTitle>
                     </S.CardInfo>
                     <S.CardInfo2>
-                        <S.Title>Vantagens</S.Title>
-                        <S.Title>Quantidade de quartos: {target.rooms}</S.Title>
+                        <S.Title>Valor do quarto</S.Title>
+                        <S.Title>{target.value}</S.Title>
                     </S.CardInfo2>
                     </S.Card>
                 ))
@@ -37,8 +36,8 @@ const TargetCard = ({ targetData, filteredTargets, fetchTargetData, searchValue,
                         <S.SubTitle>{target.address}</S.SubTitle>
                     </S.CardInfo>
                     <S.CardInfo2>
-                        <S.Title>Vantagens</S.Title>
-                        <S.Title>Quantidade de quartos: {target.rooms}</S.Title>
+                        <S.Title>Valor do quarto</S.Title>
+                        <S.Title>{target.value}</S.Title>
                     </S.CardInfo2>
                     </S.Card>
                 ))

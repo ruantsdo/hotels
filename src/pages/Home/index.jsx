@@ -19,6 +19,8 @@ import Ilustration from '../../assets/imgs/searchPhoto.jpeg'
 import { db } from '../../services/firebase'
 import { collection, query, getDocs } from "firebase/firestore";
 
+import StarRatings from 'react-star-ratings';
+
 const Home = () => {
   // eslint-disable-next-line
   const { token } = useContext(AuthContext)
@@ -105,17 +107,33 @@ const Home = () => {
           <>
             <InfoImage src={Ilustration} />
             <Title>{targetData[targetIndex].name}</Title>
-            <SubTitle>{targetData[targetIndex].address}</SubTitle>
+            <StarRatings
+                rating={parseFloat(targetData[targetIndex].tier)}
+                starRatedColor="gold"
+                starDimension="2rem"
+                starSpacing="0.3rem"
+                numberOfStars={5}
+            />
+            <SubTitle>Endereço: {targetData[targetIndex].address}</SubTitle>
+            <Title>Quantidade de Quartos: {targetData[targetIndex].rooms}</Title>
             <Title>Vantagens</Title>
-            <Title>Valor</Title>
+            <Title>{targetData[targetIndex].benefits}</Title>
           </>
         ) : targetIndex !== null && searchValue !== "" ? (
           <>
             <InfoImage src={Ilustration} />
             <Title>{filteredTargets[targetIndex].name}</Title>
-            <SubTitle>{filteredTargets[targetIndex].address}</SubTitle>
+            <StarRatings
+                rating={parseFloat(filteredTargets[targetIndex].tier)}
+                starRatedColor="gold"
+                starDimension="2rem"
+                starSpacing="0.3rem"
+                numberOfStars={5}
+            />
+            <SubTitle>Endereço: {filteredTargets[targetIndex].address}</SubTitle>
+            <Title>Quantidade de Quartos: {filteredTargets[targetIndex].rooms}</Title>
             <Title>Vantagens</Title>
-            <Title>Valor</Title>
+            <Title>{filteredTargets[targetIndex].benefits}</Title>
           </>
         ) : (
           <Title>Clique em um card para obter mais informações!</Title>

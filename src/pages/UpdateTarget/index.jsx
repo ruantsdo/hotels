@@ -35,6 +35,8 @@ const TargetUpdate = () => {
   const [tier, setTier] = useState("")
   const [charter, setCharter] = useState("")
   const [rooms, setRooms] = useState("")
+  const [benefits, setBenefits] = useState("")
+  const [value, setValue] = useState("")
 
   const [open, setOpen] = React.useState(false);
   const handleClickOpen = () => {
@@ -63,6 +65,8 @@ const TargetUpdate = () => {
       setTier(storeData.tier);
       setCharter(storeData.charter);
       setRooms(storeData.rooms);
+      setBenefits(storeData.benefits);
+      setValue(storeData.value)
     } else {
       addToast("Não foi possível recuperar os seus dados!", { appearance: 'error', autoDismiss: true, })
       navigate('/');
@@ -78,6 +82,8 @@ const TargetUpdate = () => {
       cnpj: cnpj,
       charter: charter,
       rooms: rooms,
+      benefits: benefits,
+      value: value
     }).catch((error) => {
       addToast("Não foi possivel atualizar os dados. Por favor tente novamente!", { appearance: 'error', autoDismiss: true, })
       addToast(error, { appearance: 'error', autoDismiss: true, })
@@ -103,12 +109,14 @@ const TargetUpdate = () => {
             <Title>Atualize os dados do seu Hotel</Title>
           </TitleContainer>
           <InputContainer>
-            <TextField id="name" label="Nome" variant="standard" type='text' value={name} onChange={(event) => setName(event.target.value)} />
+          <TextField id="name" label="Nome" variant="standard" type='text' value={name} onChange={(event) => setName(event.target.value)} />
             <TextField id="cnpj" label="CNPJ" variant="standard" type='string' value={cnpj} onChange={(event) => setCnpj(event.target.value)} />
             <TextField id="adress" label="Endereço" variant="standard" type='text' value={address} onChange={(event) => setAddress(event.target.value)} />
-            <TextField id="class" label="Classificação do hotel" variant="standard" type='number' value={tier} onChange={(event) => setTier(event.target.value)} />
+            <TextField id="class" label="Classificação do hotel" variant="standard" type='number' value={tier} onChange={(event) => setTier(event.target.value)} inputProps={{ min: 1, max: 5 }}/>
             <TextField id="charter" label="Alvará de funcionamento" variant="standard" type='number' value={charter} onChange={(event) => setCharter(event.target.value)} />
-            <TextField id="rooms" label="Quantidade de quartos" variant="standard" type='number' value={rooms} onChange={(event) => setRooms(event.target.value)} />
+            <TextField id="rooms" label="Quantidade de quartos" variant="standard" type='number' value={rooms} onChange={(event) => setRooms(event.target.value)} inputProps={{ min: 1 }} />
+            <TextField id="value" label="Valor do quarto" variant="standard" type='text' value={value} onChange={(event) => setValue(event.target.value)} />
+            <TextField id="benefits" label="Beneficíos" variant="standard" type='text' value={benefits} onChange={(event) => setBenefits(event.target.value)} multiline maxRows={4}/>
           </InputContainer>
           <Button variant="contained" style={{width: "70%", height: "3rem"}} onClick={() => writeStoreInDB()} >Atualizar</Button>
           <Button variant="contained" color="error" style={{width: "70%", height: "3rem"}} onClick={() => handleClickOpen()} >APAGAR HOTEL</Button>

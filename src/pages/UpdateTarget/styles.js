@@ -17,7 +17,7 @@ export const FormContainer = styled.div`
     display: flex;
 
     width: 35vw;
-    height: 30rem;
+    height: 95%;
 
     background-color: white;
     border: 1px solid black;
@@ -42,6 +42,7 @@ export const InputContainer = styled.div`
     width: 80%; 
     display: flex; 
     flex-direction: column;
+
 `
 export const Title = styled.text`
     color: black;

@@ -17,7 +17,7 @@ export const FormContainer = styled.div`
     display: flex;
 
     width: 35vw;
-    height: 30rem;
+    height: 95%;
 
     background-color: white;
     border: 1px solid black;
