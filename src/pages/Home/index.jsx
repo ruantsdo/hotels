@@ -62,6 +62,7 @@ const Home = () => {
       alert("Erro ao realizar a busca com filtro:", error);
     }
 
+    setTargetIndex(null)
     setSearchValue(inputValue)
   }
 
