@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
 
 const UserUpdate = () => {
-  const { token } = useContext(AuthContext)
+  const { token, deleteCurrentUser } = useContext(AuthContext)
 
   useEffect(() => {
     handleUserData() 
@@ -60,6 +60,12 @@ const UserUpdate = () => {
     }
   }
 
+  const handleDeleteUser = async () => {
+    await deleteCurrentUser().then(() => {
+      navigate('/')
+    })
+  }
+
   return (
     <>
      <Header />
@@ -72,6 +78,7 @@ const UserUpdate = () => {
             <TextField id="name" label="Nome" variant="standard" type='text' value={name} onChange={(event) => setName(event.target.value)} />
           </InputContainer>
           <Button variant="contained" style={{width: "70%", height: "3rem"}} onClick={() => writeUserInDB()} >Atualizar</Button>
+          <Button variant="contained" color="error" style={{width: "70%", height: "3rem"}} onClick={() => handleDeleteUser()} >DELETAR USUÁRIO</Button>
         </FormContainer>
       </Container>
     </>

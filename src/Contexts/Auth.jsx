@@ -4,8 +4,9 @@ import { useToasts } from 'react-toast-notifications'
 
 //Firebase
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
-import { auth, db } from '../services/firebase'
-import { doc, setDoc, getDoc } from "firebase/firestore"
+import { db } from '../services/firebase'
+import { deleteDoc, doc, setDoc, getDoc } from "firebase/firestore"
+import { getAuth, deleteUser } from "firebase/auth";
 
 //import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -17,9 +18,11 @@ export const AuthProvider = ({ children }) => {
 
     const { addToast } = useToasts()
 
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+
     useEffect(() =>{
-        setUser(JSON.parse(localStorage.getItem('@APPAuth:user')))
-        setToken(JSON.parse(localStorage.getItem('@APPAuth:token')))  
+        updateInfo()
     }, [])
 
     async function updateInfo(){
@@ -60,7 +63,7 @@ export const AuthProvider = ({ children }) => {
             localStorage.clear()
             setUser(null)
             setToken(null)
-            addToast("Você escolheu sair!", { appearance: 'info', autoDismiss: true, })
+            addToast("Você escolheu sair!", { appearance: 'info', autoDismiss: true, placement: 'top-center'})
         })
     }
 
@@ -101,6 +104,33 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
+    async function deleteTarget(){
+        try {
+          await deleteDoc(doc(db, "establishments", token))
+          addToast("Os dados foram deletados!", { appearance: 'success', autoDismiss: true, })     
+        } catch (error) {
+          addToast("Não foi possivel deletar os dados. Por favor tente novamente!", { appearance: 'error', autoDismiss: true, })
+        }
+    }
+
+    async function deleteCurrentUser(){
+        deleteUser(currentUser).then(() => {
+        try {
+            deleteDoc(doc(db, "establishments", token))
+            deleteDoc(doc(db, "users", token))
+            } catch (error) {
+            addToast("Não foi possivel deletar os dados. Por favor tente novamente!", { appearance: 'error', autoDismiss: true, })
+            return
+            }
+
+          setToken(null)
+          setUser(null)
+    
+          addToast("O usuário foi deletado com sucesso!", { appearance: 'success', autoDismiss: true, })
+        }).catch((error) => {
+          addToast("Não foi possível deletar o seu usuário! Tente novamente mais tarde!", { appearance: 'error', autoDismiss: true, })
+        });
+    }
 
 /*
     // eslint-disable-next-line
@@ -201,6 +231,8 @@ export const AuthProvider = ({ children }) => {
                 signInWithEmail,
                 handleUserData,
                 updateInfo,
+                deleteTarget,
+                deleteCurrentUser,
             }}
         >
             {children}

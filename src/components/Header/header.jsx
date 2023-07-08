@@ -30,7 +30,7 @@ const Header = () => {
   const { addToast } = useToasts()
 
   const [storage, setStorage] = useState(null)
- 
+
   useEffect(() => {
     checkEstablishments()
 
@@ -91,6 +91,7 @@ const Header = () => {
     setStorage(null)
     navigate('/')
   }
+
 
   return(
     <Container>
@@ -171,12 +172,14 @@ const Header = () => {
               }
             <Divider />
               {token ? 
+              <>
                 <MenuItem onClick={() => {handleClose(); logout()}}>
-                  <ListItemIcon>
-                    <LogoutIcon />
-                  </ListItemIcon>
-                  Sair
-                </MenuItem>
+                    <ListItemIcon>
+                      <LogoutIcon />
+                    </ListItemIcon>
+                    Sair
+                  </MenuItem>
+              </>
               :
                 <MenuItem onClick={() => {handleClose(); navigate('/login')}}>
                   <ListItemIcon>

@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
 
 const TargetUpdate = () => {
-  const { token } = useContext(AuthContext)
+  const { token, deleteTarget } = useContext(AuthContext)
 
   const navigate = useNavigate()
   const { addToast } = useToasts()
@@ -67,6 +67,12 @@ const TargetUpdate = () => {
       addToast("Os dados foram atualizados com sucesso!", { appearance: 'success', autoDismiss: true, })
   }
 
+  async function handleDeleteTarget(){
+    deleteTarget().then(() => {
+      navigate('/')
+    })
+  }
+
 
   return (
     <>
@@ -85,6 +91,7 @@ const TargetUpdate = () => {
             <TextField id="rooms" label="Quantidade de quartos" variant="standard" type='number' value={rooms} onChange={(event) => setRooms(event.target.value)} />
           </InputContainer>
           <Button variant="contained" style={{width: "70%", height: "3rem"}} onClick={() => writeStoreInDB()} >Atualizar</Button>
+          <Button variant="contained" color="error" style={{width: "70%", height: "3rem"}} onClick={() => handleDeleteTarget()} >APAGAR HOTEL</Button>
         </FormContainer>
       </Container>
     </>
