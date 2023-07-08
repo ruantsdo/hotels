@@ -85,6 +85,11 @@ export const InfoContainer = styled.div`
     background-color:  white;
 
     overflow: auto;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
 `
 export const Card = styled.div`
     display: flex;
@@ -102,7 +107,6 @@ export const Card = styled.div`
 
     box-shadow: 0px 12px 24px -12px rgba(0, 0, 0, 0.5);
     -webkit-box-shadow: 0px 12px 24px -12px rgba(0, 0, 0, 0.5);
-
 `
 export const CardImage = styled.img`
     width: 25%;

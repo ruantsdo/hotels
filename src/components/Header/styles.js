@@ -18,6 +18,10 @@ export const LogoContainer = styled.div`
     justify-content: start;
 
     text-indent: 1rem;
+
+    &:hover{
+        cursor: pointer;
+    }
 `
 export const MenuContainer = styled.div`
     display: flex;
@@ -36,5 +40,11 @@ export const MenuIcons = styled.div`
 
     align-items: center;
     justify-content: center;
+`
+export const Logo = styled.img`
+    width: 40px;
+    height: 40px;
+
+    margin-left: 0.5rem;
 `
 

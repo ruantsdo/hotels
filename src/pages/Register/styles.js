@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import background from "../../assets/imgs/login-background.jpeg"
+import background from "../../assets/imgs/background2.jpg"
 
 export const Container = styled.div`
     display: flex;
@@ -21,6 +21,7 @@ export const FormContainer = styled.div`
 
     background-color: white;
     border: 1px solid black;
+    border-radius: 1rem;
 
     box-shadow: 0px 12px 24px -12px rgba(0, 0, 0, 0.5);
     -webkit-box-shadow: 0px 12px 24px -12px rgba(0, 0, 0, 0.5);

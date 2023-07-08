@@ -6,7 +6,7 @@ import { useToasts } from 'react-toast-notifications'
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
 import { db } from '../services/firebase'
 import { deleteDoc, doc, setDoc, getDoc } from "firebase/firestore"
-import { getAuth, deleteUser } from "firebase/auth";
+import { getAuth, deleteUser, updateProfile } from "firebase/auth";
 
 //import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -36,7 +36,11 @@ export const AuthProvider = ({ children }) => {
             const response = userCredential.user
             localStorage.setItem('@APPAuth:token', JSON.stringify(response.uid))
             setToken(response.uid)
-            writeUserInDB(response.uid, name, email)
+            writeUserInDB(response.uid, name, email).then(() => {
+                updateProfile(auth.currentUser, {
+                    displayName: name
+                })
+            })
         }).catch((error) => {
             addToast("Não foi possivel criar a sua conta. Por favor tente novamente!", { appearance: 'error', autoDismiss: true, })
             addToast(error , { appearance: 'error', autoDismiss: true, })
@@ -63,7 +67,10 @@ export const AuthProvider = ({ children }) => {
             localStorage.clear()
             setUser(null)
             setToken(null)
-            addToast("Você escolheu sair!", { appearance: 'info', autoDismiss: true, placement: 'top-center'})
+            addToast("Você foi desconectado!", { appearance: 'info', autoDismiss: true, placement: 'top-center'})
+        }).then(() => {
+            setTimeout(() => {   
+            }, 1000);
         })
     }
 
@@ -116,17 +123,16 @@ export const AuthProvider = ({ children }) => {
     async function deleteCurrentUser(){
         deleteUser(currentUser).then(() => {
         try {
-            deleteDoc(doc(db, "establishments", token))
-            deleteDoc(doc(db, "users", token))
+                deleteDoc(doc(db, "establishments", token))
+                deleteDoc(doc(db, "users", token))
             } catch (error) {
-            addToast("Não foi possivel deletar os dados. Por favor tente novamente!", { appearance: 'error', autoDismiss: true, })
-            return
+                addToast("Não foi possivel deletar os dados. Por favor tente novamente!", { appearance: 'error', autoDismiss: true, })
+                return
             }
 
-          setToken(null)
-          setUser(null)
+            firebaseSignOut()
     
-          addToast("O usuário foi deletado com sucesso!", { appearance: 'success', autoDismiss: true, })
+            addToast("O usuário foi deletado com sucesso!", { appearance: 'success', autoDismiss: true, })
         }).catch((error) => {
           addToast("Não foi possível deletar o seu usuário! Tente novamente mais tarde!", { appearance: 'error', autoDismiss: true, })
         });

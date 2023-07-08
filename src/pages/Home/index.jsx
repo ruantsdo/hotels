@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import AuthContext from '../../Contexts/Auth'
 
 import Header from '../../components/Header/header'
 import TargetCard from '../../components/Card/Card'
 
 import { Container, SearchContainer, CardsContainer, InfoContainer, 
         ContentContainer,Title, SubTitle, 
-        InfoImage } from './styles'
+        InfoImage, Card, CardInfo } from './styles'
 
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -19,12 +20,15 @@ import { db } from '../../services/firebase'
 import { collection, query, getDocs } from "firebase/firestore";
 
 const Home = () => {
+  // eslint-disable-next-line
+  const { token } = useContext(AuthContext)
+
   const [targetData, setTargetData] = useState([])
   const [filteredTargets, setFilteredTargets] = useState([]);
 
-
   const [inputValue, setInputValue] = useState("")
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState("")
+  const [targetIndex, setTargetIndex] = useState(null)
 
   const fetchTargetData = async () => {
     try {
@@ -42,6 +46,8 @@ const Home = () => {
 
   useEffect(() => {
     fetchTargetData()
+
+    // eslint-disable-next-line
   }, [])
 
   const handleSearch = async () => {
@@ -55,7 +61,11 @@ const Home = () => {
     }
 
     setSearchValue(inputValue)
-  };
+  }
+
+  const handleCardClick = (index) => {
+    setTargetIndex(index)
+  }
   
   return (
     <Container>
@@ -80,15 +90,37 @@ const Home = () => {
       </SearchContainer>
       <ContentContainer>
         <CardsContainer>
-          <TargetCard targetData={targetData} filteredTargets={filteredTargets} fetchTargetData={handleSearch} searchValue={searchValue} />
+          {targetData.length === 0 ? 
+            <Card>
+              <CardInfo>
+                <Title>Não há hotéis cadastrados no momento!</Title>
+              </CardInfo>
+            </Card>
+          :
+            <TargetCard targetData={targetData} filteredTargets={filteredTargets} fetchTargetData={handleSearch} searchValue={searchValue} handleCardClick={handleCardClick} />
+          }
         </CardsContainer>
         <InfoContainer>
-          <InfoImage src={Ilustration} />
-            <Title>Nome do hotel</Title>
-            <SubTitle>Cidade</SubTitle>
+        {targetIndex !== null && searchValue === "" ? (
+          <>
+            <InfoImage src={Ilustration} />
+            <Title>{targetData[targetIndex].name}</Title>
+            <SubTitle>{targetData[targetIndex].address}</SubTitle>
             <Title>Vantagens</Title>
             <Title>Valor</Title>
-        </InfoContainer>
+          </>
+        ) : targetIndex !== null && searchValue !== "" ? (
+          <>
+            <InfoImage src={Ilustration} />
+            <Title>{filteredTargets[targetIndex].name}</Title>
+            <SubTitle>{filteredTargets[targetIndex].address}</SubTitle>
+            <Title>Vantagens</Title>
+            <Title>Valor</Title>
+          </>
+        ) : (
+          <Title>Clique em um card para obter mais informações!</Title>
+        )}
+      </InfoContainer>
       </ContentContainer>
     </Container>
   )

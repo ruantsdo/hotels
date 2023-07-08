@@ -46,7 +46,7 @@ const SignIn = () => {
 
             if (docSnap) {
                 localStorage.setItem('@APPAuth:user', JSON.stringify(docSnap))
-            } 
+            }
 
             updateInfo()
 
@@ -54,7 +54,7 @@ const SignIn = () => {
     }).catch((error) => {
         addToast("As credênciais fornecidas estão incorretas. Por favor tente novamente!", { appearance: 'warning', autoDismiss: true, }) 
         return
-    });
+    })
   }
 
   return (

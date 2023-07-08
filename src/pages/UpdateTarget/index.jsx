@@ -6,12 +6,22 @@ import { FormContainer, Container, Title, TitleContainer, InputContainer } from 
 
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
 
 import { db } from '../../services/firebase'
 import { doc, setDoc, getDoc } from "firebase/firestore"
 
 import { useNavigate } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const TargetUpdate = () => {
   const { token, deleteTarget } = useContext(AuthContext)
@@ -25,6 +35,16 @@ const TargetUpdate = () => {
   const [tier, setTier] = useState("")
   const [charter, setCharter] = useState("")
   const [rooms, setRooms] = useState("")
+
+  const [open, setOpen] = React.useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
 
   useEffect(() => {
     handleStoreData();
@@ -91,9 +111,29 @@ const TargetUpdate = () => {
             <TextField id="rooms" label="Quantidade de quartos" variant="standard" type='number' value={rooms} onChange={(event) => setRooms(event.target.value)} />
           </InputContainer>
           <Button variant="contained" style={{width: "70%", height: "3rem"}} onClick={() => writeStoreInDB()} >Atualizar</Button>
-          <Button variant="contained" color="error" style={{width: "70%", height: "3rem"}} onClick={() => handleDeleteTarget()} >APAGAR HOTEL</Button>
+          <Button variant="contained" color="error" style={{width: "70%", height: "3rem"}} onClick={() => handleClickOpen()} >APAGAR HOTEL</Button>
         </FormContainer>
       </Container>
+
+      <Dialog
+        open={open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClose}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>{"Tem certeza disso?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            Os dados do seu hotel serão perdidos para sempre.
+            ESSA AÇÃO É IRREVERSÍVEL!!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button onClick={() => {handleClose(); handleDeleteTarget()}}>DELETAR</Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }
