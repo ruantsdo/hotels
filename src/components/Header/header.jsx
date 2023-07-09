@@ -39,8 +39,7 @@ const Header = () => {
 
   useEffect(() => {
     checkEstablishments()
-    // eslint-disable-next-line
-  }, [])
+  })
 
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
