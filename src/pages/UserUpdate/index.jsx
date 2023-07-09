@@ -43,14 +43,11 @@ const UserUpdate = () => {
 
   useEffect(() => {
     handleUserData() 
-
-    // eslint-disable-next-line
-  }, [])
+  })
 
   const navigate = useNavigate()
   const { addToast } = useToasts()
 
-  // eslint-disable-next-line
   const [email, setEmail] = useState("")
   const [name, setName] = useState("")
 
