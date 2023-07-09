@@ -12,12 +12,14 @@ export const Container = styled.div`
 
     background-color: white;
     background-image: url(${background});
+
+    overflow: auto;
 `
 export const FormContainer = styled.div`
     display: flex;
 
     width: 35vw;
-    height: 95%;
+    height: fit-content;
 
     background-color: white;
     border: 1px solid black;
@@ -29,6 +31,10 @@ export const FormContainer = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
+
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
 `
 export const TitleContainer = styled.div`
     display: flex;
@@ -42,7 +48,6 @@ export const InputContainer = styled.div`
     width: 80%; 
     display: flex; 
     flex-direction: column;
-
 `
 export const Title = styled.text`
     color: black;

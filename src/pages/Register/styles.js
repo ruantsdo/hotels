@@ -12,6 +12,8 @@ export const Container = styled.div`
 
     background-color: white;
     background-image: url(${background});
+
+    overflow: auto;
 `
 export const FormContainer = styled.div`
     display: flex;

@@ -19,6 +19,8 @@ import { doc, setDoc, getDoc } from "firebase/firestore"
 import { useNavigate } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
 
+import InputMask from 'react-input-mask';
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -50,8 +52,7 @@ const TargetUpdate = () => {
 
   useEffect(() => {
     handleStoreData();
-    // eslint-disable-next-line
-  }, []);
+  });
 
   const handleStoreData = async () => {
     const docRef = doc(db, "establishments", token);
@@ -109,8 +110,20 @@ const TargetUpdate = () => {
             <Title>Atualize os dados do seu Hotel</Title>
           </TitleContainer>
           <InputContainer>
-          <TextField id="name" label="Nome" variant="standard" type='text' value={name} onChange={(event) => setName(event.target.value)} />
-            <TextField id="cnpj" label="CNPJ" variant="standard" type='string' value={cnpj} onChange={(event) => setCnpj(event.target.value)} />
+            <TextField id="name" label="Nome" variant="standard" type='text' value={name} onChange={(event) => setName(event.target.value)} />
+            <InputMask
+              mask="99.999.999/9999-99"
+              id="cnpj"
+              label="CNPJ"
+              variant="standard"
+              type="text"
+              value={cnpj}
+              onChange={(event) => setCnpj(event.target.value)}
+            >
+              {(inputProps) => (
+                <TextField {...inputProps} />
+              )}
+            </InputMask>
             <TextField id="adress" label="Endereço" variant="standard" type='text' value={address} onChange={(event) => setAddress(event.target.value)} />
             <TextField id="class" label="Classificação do hotel" variant="standard" type='number' value={tier} onChange={(event) => setTier(event.target.value)} inputProps={{ min: 1, max: 5 }}/>
             <TextField id="charter" label="Alvará de funcionamento" variant="standard" type='number' value={charter} onChange={(event) => setCharter(event.target.value)} />
