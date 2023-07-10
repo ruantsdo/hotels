@@ -42,7 +42,7 @@ export const SearchContainer = styled.div`
     flex-direction: column;
 
     width: 100vw;
-    height: 15vh;
+    height: 16vh;
 
     color: black;
     background-color:  white;
@@ -70,6 +70,8 @@ export const CardsContainer = styled.div`
     background-color:  white;
 
     align-items: center;
+
+    overflow: auto;
 `
 export const InfoContainer = styled.div`
     display: flex;
