@@ -52,7 +52,8 @@ const TargetUpdate = () => {
 
   useEffect(() => {
     handleStoreData();
-  });
+  // eslint-disable-next-line
+  }, [])
 
   const handleStoreData = async () => {
     const docRef = doc(db, "establishments", token);

@@ -43,7 +43,8 @@ const UserUpdate = () => {
 
   useEffect(() => {
     handleUserData() 
-  })
+  // eslint-disable-next-line
+  }, [])
 
   const navigate = useNavigate()
   const { addToast } = useToasts()
