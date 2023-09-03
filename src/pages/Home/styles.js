@@ -42,7 +42,7 @@ export const SearchContainer = styled.div`
     flex-direction: column;
 
     width: 100vw;
-    height: 15vh;
+    height: 16vh;
 
     color: black;
     background-color:  white;
@@ -63,12 +63,15 @@ export const ContentContainer = styled.div`
 `
 export const CardsContainer = styled.div`
     display: flex;
+    flex-direction: column;
 
     width: 80%;
     height: 100%;
     background-color:  white;
 
-    justify-content: center;
+    align-items: center;
+
+    overflow: auto;
 `
 export const InfoContainer = styled.div`
     display: flex;
@@ -84,6 +87,11 @@ export const InfoContainer = styled.div`
     background-color:  white;
 
     overflow: auto;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
 `
 export const Card = styled.div`
     display: flex;
@@ -101,7 +109,6 @@ export const Card = styled.div`
 
     box-shadow: 0px 12px 24px -12px rgba(0, 0, 0, 0.5);
     -webkit-box-shadow: 0px 12px 24px -12px rgba(0, 0, 0, 0.5);
-
 `
 export const CardImage = styled.img`
     width: 25%;

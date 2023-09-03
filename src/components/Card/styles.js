@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 export const CardsContainer = styled.div`
@@ -27,6 +26,14 @@ export const Card = styled.div`
     box-shadow: 0px 12px 24px -12px rgba(0, 0, 0, 0.5);
     -webkit-box-shadow: 0px 12px 24px -12px rgba(0, 0, 0, 0.5);
 
+    transition: scale 0.2s;
+
+    &:hover{
+        cursor: pointer;
+        border: 2px solid #008F7A;
+
+        scale: 1.01;
+    }
 `
 export const CardImage = styled.img`
     width: 25%;
@@ -67,6 +74,7 @@ export const CardInfo2 = styled.div`
 
     justify-content: space-around;
     align-items: center;
+    justify-content: center;
 
     box-shadow: 0px 12px 24px -12px rgba(0, 0, 0, 0.5);
     -webkit-box-shadow: 0px 12px 24px -12px rgba(0, 0, 0, 0.5);

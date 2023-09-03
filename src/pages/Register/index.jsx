@@ -41,9 +41,9 @@ const Register = () => {
   };
 
   async function createUser(){
-    await registerWithEmail(name, email, password)
-
-    navigate('/')
+    await registerWithEmail(name, email, password).then(() => {
+      navigate('/')
+    })
   } 
 
   return (

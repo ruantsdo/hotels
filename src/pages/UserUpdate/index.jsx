@@ -4,28 +4,51 @@ import AuthContext from '../../Contexts/Auth'
 import Header from "../../components/Header/header"
 import { FormContainer, Container, Title, TitleContainer, InputContainer } from "./styles"
 
+
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
 
 import { db } from '../../services/firebase'
 import { doc, setDoc, getDoc } from "firebase/firestore"
+import { getAuth, updateProfile } from "firebase/auth";
+
 
 import { useNavigate } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 const UserUpdate = () => {
-  const { token } = useContext(AuthContext)
+  const { token, deleteCurrentUser } = useContext(AuthContext)
+
+  const [open, setOpen] = React.useState(false);
+
+  const auth = getAuth();
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     handleUserData() 
-
-    // eslint-disable-next-line
+  // eslint-disable-next-line
   }, [])
 
   const navigate = useNavigate()
   const { addToast } = useToasts()
 
-  // eslint-disable-next-line
   const [email, setEmail] = useState("")
   const [name, setName] = useState("")
 
@@ -36,8 +59,14 @@ const UserUpdate = () => {
       }).catch((error) => {
         addToast("Não foi possivel atualizar os dados. Por favor tente novamente!", { appearance: 'error', autoDismiss: true, })
         addToast(error, { appearance: 'error', autoDismiss: true, })
-      })
-    navigate('/')
+      }).then(() => {
+        updateProfile(auth.currentUser, {
+          displayName: name
+        }).then(() => {
+          addToast("Os dados foram atualizados com sucesso!", { appearance: 'success', autoDismiss: true, })
+          navigate('/')
+        })
+      }) 
   }
 
   async function handleUserData(){
@@ -59,6 +88,14 @@ const UserUpdate = () => {
     }
   }
 
+  const handleDeleteUser = async () => {
+    await deleteCurrentUser().then(() => {
+      setTimeout(() => {
+        navigate('/')
+      }, 1000);
+    })
+  }
+
   return (
     <>
      <Header />
@@ -71,8 +108,29 @@ const UserUpdate = () => {
             <TextField id="name" label="Nome" variant="standard" type='text' value={name} onChange={(event) => setName(event.target.value)} />
           </InputContainer>
           <Button variant="contained" style={{width: "70%", height: "3rem"}} onClick={() => writeUserInDB()} >Atualizar</Button>
+          <Button variant="contained" color="error" style={{width: "70%", height: "3rem"}} onClick={() => handleClickOpen()} >DELETAR USUÁRIO</Button>
         </FormContainer>
       </Container>
+
+      <Dialog
+        open={open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClose}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>{"Tem certeza disso?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            Os seus dados de usuário e os dados do seu hotel (caso tenha algum) serão perdidos para sempre.
+            ESSA AÇÃO É IRREVERSÍVEL!!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button onClick={() => {handleClose() ; handleDeleteUser()}}>DELETAR</Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }

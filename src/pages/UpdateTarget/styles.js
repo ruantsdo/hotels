@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import background from "../../assets/imgs/login-background.jpeg"
+import background from "../../assets/imgs/background2.jpg"
 
 export const Container = styled.div`
     display: flex;
@@ -12,15 +12,18 @@ export const Container = styled.div`
 
     background-color: white;
     background-image: url(${background});
+
+    overflow: auto;
 `
 export const FormContainer = styled.div`
     display: flex;
 
     width: 35vw;
-    height: 30rem;
+    height: fit-content;
 
     background-color: white;
     border: 1px solid black;
+    border-radius: 0.5rem;
 
     box-shadow: 0px 12px 24px -12px rgba(0, 0, 0, 0.5);
     -webkit-box-shadow: 0px 12px 24px -12px rgba(0, 0, 0, 0.5);
@@ -28,6 +31,10 @@ export const FormContainer = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
+
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
 `
 export const TitleContainer = styled.div`
     display: flex;

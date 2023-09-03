@@ -1,12 +1,13 @@
 import React, { useState, useContext, useEffect } from 'react'
 import AuthContext from '../../Contexts/Auth'
 
-import { Container, LogoContainer, MenuContainer } from './styles'
+import { Container, LogoContainer, MenuContainer, Logo } from './styles'
 
 import { useNavigate } from 'react-router-dom'
 
 import { db } from '../../services/firebase'
 import { doc, getDoc } from "firebase/firestore"
+import { getAuth } from "firebase/auth";
 
 import { useToasts } from 'react-toast-notifications'
 
@@ -23,19 +24,22 @@ import Tooltip from '@mui/material/Tooltip';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 
+import LogoImg from '../../assets/imgs/logo.png'
+
 const Header = () => {
   const { token, firebaseSignOut } = useContext(AuthContext)
+
+  const auth = getAuth();
+  const user = auth.currentUser;
 
   const navigate = useNavigate()
   const { addToast } = useToasts()
 
   const [storage, setStorage] = useState(null)
- 
+
   useEffect(() => {
     checkEstablishments()
-
-    // eslint-disable-next-line
-  }, [])
+  })
 
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
@@ -94,7 +98,8 @@ const Header = () => {
 
   return(
     <Container>
-        <LogoContainer>
+        <LogoContainer onClick={() => navigate('/')}>
+          <Logo src={LogoImg} />
           Site de Hotel
         </LogoContainer>
         <MenuContainer>
@@ -144,9 +149,9 @@ const Header = () => {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-              {token ? 
+              {user ? 
                 <MenuItem >
-                  <AccountBoxIcon /> Olá
+                  <AccountBoxIcon /> Olá, {user.displayName}
                 </MenuItem>
                 :  
                 <MenuItem >
@@ -171,12 +176,14 @@ const Header = () => {
               }
             <Divider />
               {token ? 
+              <>
                 <MenuItem onClick={() => {handleClose(); logout()}}>
-                  <ListItemIcon>
-                    <LogoutIcon />
-                  </ListItemIcon>
-                  Sair
-                </MenuItem>
+                    <ListItemIcon>
+                      <LogoutIcon />
+                    </ListItemIcon>
+                    Sair
+                  </MenuItem>
+              </>
               :
                 <MenuItem onClick={() => {handleClose(); navigate('/login')}}>
                   <ListItemIcon>

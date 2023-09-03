@@ -1,21 +1,74 @@
-import React, { useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import AuthContext from '../../Contexts/Auth'
 
 import Header from '../../components/Header/header'
+import TargetCard from '../../components/Card/Card'
+
 import { Container, SearchContainer, CardsContainer, InfoContainer, 
-        ContentContainer, Card, CardInfo, CardInfo2, Title, SubTitle, 
-        CardImage, InfoImage } from './styles'
+        ContentContainer,Title, SubTitle, 
+        InfoImage, Card, CardInfo } from './styles'
 
 import SearchIcon from '@mui/icons-material/Search';
 
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
 
 import Ilustration from '../../assets/imgs/searchPhoto.jpeg'
 
+import { db } from '../../services/firebase'
+import { collection, query, getDocs } from "firebase/firestore";
+
+import StarRatings from 'react-star-ratings';
+
 const Home = () => {
   // eslint-disable-next-line
-  const {} = useContext(AuthContext)
+  const { token } = useContext(AuthContext)
+
+  const [targetData, setTargetData] = useState([])
+  const [filteredTargets, setFilteredTargets] = useState([]);
+
+  const [inputValue, setInputValue] = useState("")
+  const [searchValue, setSearchValue] = useState("")
+  const [targetIndex, setTargetIndex] = useState(null)
+
+  const fetchTargetData = async () => {
+    try {
+        const q = query(collection(db, "establishments"));
+        const querySnapshot = await getDocs(q);
+        const targetsData = [];
+        querySnapshot.forEach((doc) => {
+            targetsData.push(doc.data());
+        });
+        setTargetData(targetsData);
+    } catch (error) {
+        alert("Erro ao ler dados do Firestore:", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchTargetData()
+
+    // eslint-disable-next-line
+  }, [])
+
+  const handleSearch = async () => {
+    try {
+      const filteredTargets = targetData.filter((target) =>
+        target.name.toLowerCase().includes(inputValue.toLowerCase())
+      );
+      setFilteredTargets(filteredTargets);
+    } catch (error) {
+      alert("Erro ao realizar a busca com filtro:", error);
+    }
+
+    setTargetIndex(null)
+    setSearchValue(inputValue)
+  }
+
+  const handleCardClick = (index) => {
+    setTargetIndex(index)
+  }
   
   return (
     <Container>
@@ -27,31 +80,66 @@ const Home = () => {
             id="search"
             sx={{ m: 1, width: '50%' }}
             InputProps={{
-              endAdornment: <InputAdornment position="end"><SearchIcon /></InputAdornment>,
+              endAdornment: 
+              <InputAdornment position="end" >
+                <IconButton type="button" sx={{ p: '10px' }} aria-label="search" onClick={() => handleSearch()}>
+                  <SearchIcon />
+                </IconButton>
+              </InputAdornment>,
           }}
-        />
+          value={inputValue}
+          onChange={(event) => {setInputValue(event.target.value)}}
+        /> 
       </SearchContainer>
       <ContentContainer>
         <CardsContainer>
-          <Card>
-            <CardImage src={Ilustration} />
-            <CardInfo>
-              <Title>Nome do hotel</Title>
-              <SubTitle>Cidade</SubTitle>
-            </CardInfo>
-            <CardInfo2>
-              <Title>Vantagens</Title>
-              <Title>Valor</Title>
-            </CardInfo2>
-          </Card>
+          {targetData.length === 0 ? 
+            <Card>
+              <CardInfo>
+                <Title>Não há hotéis cadastrados no momento!</Title>
+              </CardInfo>
+            </Card>
+          :
+            <TargetCard targetData={targetData} filteredTargets={filteredTargets} fetchTargetData={handleSearch} searchValue={searchValue} handleCardClick={handleCardClick} />
+          }
         </CardsContainer>
         <InfoContainer>
-          <InfoImage src={Ilustration} />
-            <Title>Nome do hotel</Title>
-            <SubTitle>Cidade</SubTitle>
+        {targetIndex !== null && searchValue === "" ? (
+          <>
+            <InfoImage src={Ilustration} />
+            <Title>{targetData[targetIndex].name}</Title>
+            <StarRatings
+                rating={parseFloat(targetData[targetIndex].tier)}
+                starRatedColor="gold"
+                starDimension="2rem"
+                starSpacing="0.3rem"
+                numberOfStars={5}
+            />
+            <SubTitle>Endereço: {targetData[targetIndex].address}</SubTitle>
+            <Title>Quantidade de Quartos: {targetData[targetIndex].rooms}</Title>
             <Title>Vantagens</Title>
-            <Title>Valor</Title>
-        </InfoContainer>
+            <Title>{targetData[targetIndex].benefits}</Title>
+          </>
+        ) : targetIndex !== null && searchValue !== "" ? (
+          <>
+            <InfoImage src={Ilustration} />
+            <Title>{filteredTargets[targetIndex].name}</Title>
+            <StarRatings
+                rating={parseFloat(filteredTargets[targetIndex].tier)}
+                starRatedColor="gold"
+                starDimension="2rem"
+                starSpacing="0.3rem"
+                numberOfStars={5}
+            />
+            <SubTitle>Endereço: {filteredTargets[targetIndex].address}</SubTitle>
+            <Title>Quantidade de Quartos: {filteredTargets[targetIndex].rooms}</Title>
+            <Title>Vantagens</Title>
+            <Title>{filteredTargets[targetIndex].benefits}</Title>
+          </>
+        ) : (
+          <Title>Clique em um card para obter mais informações!</Title>
+        )}
+      </InfoContainer>
       </ContentContainer>
     </Container>
   )
