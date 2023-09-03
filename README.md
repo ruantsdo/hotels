@@ -1,70 +1,54 @@
-# Getting Started with Create React App
+# Hotel registration website
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was created to obtain approval in one of the subjects of my undergraduate course in information systems at UNEB Alagoinhas.   
+The purpose of this project is to register hotels on the platform and be able to carry out searches by searching for the name of the hotel.   
+The project has a registration and login system using firebase and a database system to register and remove the hotel also using firebase.
+## Notices ⚠️
 
-## Available Scripts
+The functions of registration, user login and hotels in this project may be inactive due to the pre-established time limit of firebase. In order for these functions to work normally, it is necessary to update the "firebase.js" file in the "services" folder with valid credentials of a properly configured firebase.
+## Online Demo ☁️
 
-In the project directory, you can run:
+You can see an online demo of this project through this link: https://hotels-chi-ivory.vercel.app, or if you prefer, run it directly from your computer.
+## Requirements ⚙️
 
-### `npm start`
+- To run the project you must have **NODE.JS** installed on your machine. 
+- To view/edit the code you must have a text editor installed, such as VSCODE for example.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Running locally 🚀
 
-### `npm test`
+Clone the project
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+git clone https://github.com/ruantsdo/hotels.git
+```
 
-### `npm run build`
+Enter the project directory
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+cd hotels
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Install the dependencies
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+npm install --force
+```
 
-### `npm run eject`
+Start the server
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+npm start
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+> To open the project in your browser, you must access the address shown in your console.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Technologies used ⚡
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+**Front-end:** ReactJS
 
-## Learn More
+**Back-end:** Firebase
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Authors 👥
+- [@ruantsdo](https://github.com/ruantsdo)
